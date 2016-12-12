@@ -15,6 +15,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+
 import java.util.ArrayList;
 
 
@@ -52,6 +54,7 @@ public class GridViewAdapter extends ArrayAdapter<Gallery> {
         //holder.imageTitle.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
         // Log.d("Vista",item.getTitle());
         holder.image.setOnClickListener(null);
+        holder.imageTitle.setOnClickListener(null);
         if(item.getMime().equals("image")){
             final Uri path = item.getUri();
             holder.image.setOnClickListener(new View.OnClickListener() {
@@ -64,7 +67,10 @@ public class GridViewAdapter extends ArrayAdapter<Gallery> {
                             "image/*");
                     getContext().startActivity(i);
                 }
-            });}
+            });
+            Glide.with(parent.getContext()).load(item.getUri()).into(holder.image);
+
+        }
         else if(item.getMime().equals("video")){
             final Uri path = item.getUri();
             holder.image.setOnClickListener(new View.OnClickListener() {
@@ -77,46 +83,12 @@ public class GridViewAdapter extends ArrayAdapter<Gallery> {
                             "video/*");
                     getContext().startActivity(i);//startActivity(i);
                 }
-            });}
-        else if(item.getMime().equals("audio")){
-            final Uri path = item.getUri();
-            holder.image.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent i = new Intent();
-                    i.setAction(android.content.Intent.ACTION_VIEW);
-                    i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    i.setDataAndType(path,
-                            "audio/*");
-                    getContext().startActivity(i);//startActivity(i);
-                }
             });
-
-
+            Bitmap bitmap = Bitmap.createScaledBitmap(item.getImage(),dpToPx(100),dpToPx(100),true);
+            holder.image.setImageBitmap(bitmap);
         }
-        else if(item.getMime().equals("fotoaudio")){
 
-        }
-        else {
-            final Uri path = item.getUri();
-            final String mime = item.getMime();
-            holder.image.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent i = new Intent(Intent.ACTION_VIEW);
-                    i.setDataAndType(path, mime);
-                    try {
-                        getContext().startActivity(i);
-                    } catch (Exception e) {
-                        Toast.makeText(getContext(), "Can't open this type of file", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            });
 
-        }
-        Bitmap bitmap = Bitmap.createScaledBitmap(item.getImage(),dpToPx(100),dpToPx(100),true);
-
-        holder.image.setImageBitmap(bitmap);
         return row;
     }
     public int dpToPx(int dp) {
